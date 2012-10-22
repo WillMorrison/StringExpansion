@@ -27,11 +27,11 @@ def Tokenize( expression ):
 				normalchars = []
 			context.append('string')
 		# close a quoted string
+		# string may be empty, so we will ALWAYS return a normal
 		elif (context[-1] in ['string'] and char == '"'): 
-			if (len(normalchars) > 0):
-				yield ('NORMAL',''.join(normalchars), context[-1], position)
-				normalchars = []
 			context.pop()
+			yield ('NORMAL',''.join(normalchars), context[-1], position)
+			normalchars = []
 		# other characters are appended to current normal
 		elif (context[-1] in ['string']):
 			normalchars.append(char)
