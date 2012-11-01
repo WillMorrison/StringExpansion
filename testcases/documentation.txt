@@ -1,0 +1,4 @@
+This directory contains a set of test cases. Each test case will be specified by
+a .in file with test input, with an optional .out file specifying expected
+output, and an optional .comment file describing the test purpose. If the .out
+file is missing, it is expected that the associated input will produce an error
