@@ -2,6 +2,7 @@ import itertools
 import sys
 import NumRange
 
+
 ################################################################################
 # Purpose: Turn a list of tokens into two lists. The first list is designed to 
 #          be passed to itertools.product, and the second list will be used to
@@ -17,6 +18,7 @@ def Parse(itoken):
 	rangelevel = []
 	reflevel = []
 	expansionmap = []
+	sequencemap = []
 
 	for token in itoken:
 		# the following print statement is DEBUG code
@@ -24,8 +26,7 @@ def Parse(itoken):
 
 		# if an unexpected character is encountered, 
 		if (token[0] == 'UNEXPECTED'):
-			print >> sys.stderr, "Syntax error: Unexpected '{}' at position {} in context '{}'".format(token[1], token[3], token[2])
-			return None, None
+			raise SyntaxError, "Unexpected '{}' at position {} in context '{}'".format(token[1], token[3], token[2])
 
 		# deal with normal strings appearing at the top level
 		elif (token[0] == 'NORMAL' and token[2] == 'top'):
@@ -39,6 +40,7 @@ def Parse(itoken):
 		elif (token[0] == 'LIST_CLOSE'):
 			toplevel.append(map(lambda x: x[1], filter(lambda x: x[0]=='NORMAL', listlevel)))
 			expansionmap.append(len(toplevel))
+			sequencemap.append(len(toplevel))
 			listlevel = []
 
 		#deal with tokens in range context
@@ -53,13 +55,13 @@ def Parse(itoken):
 			elif len(numbers) is 3:
 				seq = map(lambda x: x[1], numbers[0:1]) + int(numbers[2][1])
 			else:
-				print >> sys.stderr, "Syntax error: Incorrect number of elements in range ending at position {}".format(token[3])
-				return None, None
+				raise SyntaxError, "Incorrect number of elements in range ending at position {}".format(token[3])
 
 			# construct a range here and append it to toplevel or listlevel
 			if (token[2] == 'top'):
 				toplevel.append(NumRange.NumRange(*seq))
 				expansionmap.append(len(toplevel))
+				sequencemap.append(len(toplevel))
 			elif(token[2] == 'list'):
 				listlevel.append(NumRange.NumRange(*seq))
 			rangelevel = []
@@ -72,10 +74,13 @@ def Parse(itoken):
 			# check that we have the correct number of arguments
 			numbers = filter(lambda x: x[0]=='NUMBER', reflevel)
 			if len(numbers) is not 1:
-				print >> sys.stderr, "Syntax error: Multiple elements in reference ending at position {}".format(token[3])
-				return None, None
+				raise SyntaxError, "Multiple elements in reference ending at position {}".format(token[3])
 
-			expansionmap.append(int(numbers[0][1]))
+			# map the reference number to an element in the expansion map using the sequencemap
+			if int(numbers[0][1]) <= len(sequencemap):
+				expansionmap.append(sequencemap[int(numbers[0][1]) - 1])
+			else:
+				raise LookupError, "Unknown top level sequence number {} at position {}".format(int(numbers[0][1]), token[3])
 			reflevel = []
 
 	return toplevel, expansionmap
