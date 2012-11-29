@@ -66,7 +66,9 @@ Lists:
 Lists are composed of strings and ranges, delimited by commas, and surrounded by
 curly braces. They expand to each of the items in turn, and in the case of
 embedded ranges, will expand each of the embedded range's strings before moving
-on to the next list element. Lists may not be embedded inside other lists.
+on to the next list element. Lists may not be embedded inside other lists, the
+reasoning being that this is conceptually the same as writing the elements of
+the inner list in the outer list.
 
 Example - Simple list:
 {foo,bar,baz}
