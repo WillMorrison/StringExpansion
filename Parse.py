@@ -22,7 +22,7 @@ def Parse(itoken):
 
 	for token in itoken:
 		# the following print statement is DEBUG code
-		print '{:13} | {:10} | {:4} | \'{}\''.format(token[0], token[2], token[3], token[1])
+		#print '{:13} | {:10} | {:4} | \'{}\''.format(token[0], token[2], token[3], token[1])
 
 		# if an unexpected character is encountered, 
 		if (token[0] == 'UNEXPECTED'):
