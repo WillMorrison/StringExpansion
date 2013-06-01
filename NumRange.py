@@ -13,5 +13,5 @@ def NumRange( first, last, step=1):
 	padwidth = min(len(first), len(last)) - prefixzeroes
 
 	# build a range and return formatted values from it
-	for num in xrange(int(first), int(last)+1, int(step)):
+	for num in range(int(first), int(last)+1, int(step)):
 		yield '0'*prefixzeroes + '{:0{width}}'.format(num,width=padwidth)
